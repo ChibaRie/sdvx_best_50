@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+output/
+b50_output/
+*.spec
+build/
+dist/
