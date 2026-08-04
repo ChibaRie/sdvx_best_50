@@ -24,7 +24,7 @@
 ├── contents\          ← 游戏资源（音乐、封面）
 ├── SDVX_B50.exe       ← 放这里，双击运行 ✨
 └── b50_output\        ← 自动生成到这里
-    ├── b50.png        # 卡片网格图（1200×3128）
+    ├── b50.jpg        # 卡片网格图（800×~2174，~0.4MB）
     └── b50.html       # 自包含网页
 ```
 
@@ -44,13 +44,15 @@ SDVX_B50.exe [存档路径] [曲目数据库路径] [音乐资源目录] [输出
 
 ## 输出格式
 
-### PNG 卡片网格
+### JPEG 卡片网格
 
 | 规格 | 值 |
 |------|-----|
-| 尺寸 | 1200 × ~3128 px |
-| 布局 | 5 列 × 10 行，每卡正方形封面 220×220 |
-| 信息 | 封面 / 曲名 / 难度标签(着色) / 分数 / EX SCORE / GRADE / VF |
+| 尺寸 | 800 × ~2174 px |
+| 格式 | JPEG（quality 90） |
+| 体积 | ~0.4-0.6MB |
+| 布局 | 5 列 × 10 行，每卡正方形封面 146×146 |
+| 信息 | 封面 / 曲名 / 难度标签(着色) / 分数 / EX SCORE / GRADE / VF·占比 |
 | 风格 | Clean Dark — 深灰背景 + 白色文字 |
 
 ### HTML 自包含网页
@@ -79,9 +81,9 @@ pyinstaller SDVX_B50.spec
 ```
 ├── gen_b50.py          # CLI 入口
 ├── b50data.py          # 数据层：DB 解析、best50 选取、mdb 关联、封面定位
-├── render_png.py       # PNG 渲染：卡片网格 + 文字截断
+├── render_png.py       # JPEG 渲染：卡片网格 + 文字截断
 ├── render_html.py      # HTML 渲染：自包含网页
-├── test_*.py           # pytest 测试（32 个）
+├── test_*.py           # pytest 测试（38 个）
 ├── msyh.ttc            # 微软雅黑字体（渲染中日韩文字）
 ├── SDVX_B50.spec       # PyInstaller 打包配置
 └── assets/
@@ -96,7 +98,7 @@ pyinstaller SDVX_B50.spec
 3. 按 VOLFORCE 降序取前 50 → 总分 = 前 50 VF 之和 ÷ 1000
 4. 关联 `music_db.json` 获取曲名和难度等级
 5. 从 `contents/data/music/` 定位封面图片
-6. 渲染卡片网格 PNG + 自包含 HTML
+6. 渲染卡片网格 JPEG + 自包含 HTML（卡片标注每曲 VF 占总 VF 的百分比）
 
 ## 相关项目
 

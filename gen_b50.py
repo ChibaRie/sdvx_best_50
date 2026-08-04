@@ -35,12 +35,12 @@ def main():
     ]
 
     os.makedirs(out_dir, exist_ok=True)
-    png = os.path.join(out_dir, "b50.png")
+    jpg = os.path.join(out_dir, "b50.jpg")
     htm = os.path.join(out_dir, "b50.html")
-    render_png(rows, player, total_vf, png, skill=skill, font_path=font_path)
+    render_png(rows, player, total_vf, jpg, skill=skill, font_path=font_path)
     render_html(rows, player, total_vf, htm, skill=skill)
     print(f"player={player}  top={len(rows)}  total_vf={total_vf}")
-    print(f"written: {png}")
+    print(f"written: {jpg}")
     print(f"written: {htm}")
 
 if __name__ == "__main__":
