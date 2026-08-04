@@ -9,3 +9,6 @@ dist/
 
 
 build_venv/
+
+# 样本 HTML 输出（11MB，避免仓库膨胀；仅保留图片样本）
+assets/b50.html
