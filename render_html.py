@@ -4,7 +4,7 @@ import os
 
 
 def render_html(rows: list[dict], player_name: str, total_vf: float, out_path: str, skill: str = "") -> None:
-    thead = "<tr><th>#</th><th>封面</th><th>曲名</th><th>难度</th><th>等级</th><th>SCORE</th><th>EX SCORE</th><th>GRADE</th><th>VF</th></tr>"
+    thead = "<tr><th>#</th><th>封面</th><th>曲名</th><th>难度</th><th>等级</th><th>SCORE</th><th>EX SCORE</th><th>GRADE</th><th>VF</th><th>VF占比</th></tr>"
     body = []
     for i, r in enumerate(rows, 1):
         cover = '<td style="color:#999">无</td>'
@@ -24,6 +24,7 @@ def render_html(rows: list[dict], player_name: str, total_vf: float, out_path: s
             f'<td>{r["score"]}</td><td>{r["exscore"]}</td>'
             f'<td>{r["grade_name"]}</td>'
             f'<td>{r["volforce"]}</td>'
+            f'<td>{r.get("vf_pct", 0.0)}%</td>'
             "</tr>"
         )
     h1 = f"{html.escape(player_name)} - VOLFORCE {total_vf}"

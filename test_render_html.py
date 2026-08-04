@@ -56,3 +56,16 @@ def test_render_html_without_skill_omits_bracket(tmp_path):
     render_html(rows, "Tester", 1.725, str(out))
     text = out.read_text(encoding="utf-8")
     assert "[SKILL" not in text
+
+
+def test_render_html_includes_vf_pct_column(tmp_path):
+    rows = [{
+        "mid": 1, "type": 0, "title": "T", "label": "NOV", "level": "5",
+        "score": 100, "exscore": 90, "volforce": 10.0, "vf_pct": 100.0,
+        "clear": 6, "grade": 10, "clear_name": "PUC", "grade_name": "S",
+    }]
+    out = tmp_path / "b50.html"
+    render_html(rows, "Tester", 1.725, str(out))
+    text = out.read_text(encoding="utf-8")
+    assert "VF占比" in text
+    assert "100.0%" in text
