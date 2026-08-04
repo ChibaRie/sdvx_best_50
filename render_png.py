@@ -10,14 +10,14 @@ from PIL import Image, ImageDraw, ImageFont
 # ---------------------------------------------------------------------------
 # Layout constants
 # ---------------------------------------------------------------------------
-CANVAS_W = 1200
-MARGIN_X = 24
-MARGIN_Y = 20
-HEADER_H = 80
-CARD_W = 220
-CARD_H = 290
-COVER_H = 220
-CARD_GAP = 12
+CANVAS_W = 800
+MARGIN_X = 15
+MARGIN_Y = 14
+HEADER_H = 56
+CARD_W = 146
+CARD_H = 200
+COVER_H = 146
+CARD_GAP = 10
 COLS = 5
 
 BG_COLOR = (26, 26, 26)          # #1a1a1a
@@ -147,28 +147,28 @@ def render_png(
     draw = ImageDraw.Draw(canvas)
 
     # Fonts
-    header_name_font = _font(font_path, 26)
-    header_meta_font = _font(font_path, 16)
-    title_font = _font(font_path, 14)
-    small_font = _font(font_path, 11)
-    vf_font = _font(font_path, 13)
-    ex_font = _font(font_path, 10)
+    header_name_font = _font(font_path, 18)
+    header_meta_font = _font(font_path, 11)
+    title_font = _font(font_path, 10)
+    small_font = _font(font_path, 8)
+    vf_font = _font(font_path, 9)
+    ex_font = _font(font_path, 7)
 
     # ---- Header bar --------------------------------------------------------
     draw.rectangle([(0, 0), (CANVAS_W, HEADER_H)], fill=HEADER_BG)
     # Avatar placeholder
     draw.ellipse(
-        [(MARGIN_X, 16), (MARGIN_X + 48, 64)],
+        [(MARGIN_X, 11), (MARGIN_X + 32, 43)],
         fill=AVATAR_BG, outline=AVATAR_BORDER, width=2,
     )
     # Player name (truncated if too long)
     _draw_text_within(
         draw, player_name, header_name_font,
-        MARGIN_X + 60, 18, CANVAS_W - MARGIN_X - 60 - 200, TEXT_PRIMARY,
+        MARGIN_X + 42, 9, CANVAS_W - MARGIN_X - 42 - 130, TEXT_PRIMARY,
     )
     # VOLFORCE
     vf_text = f"VOLFORCE {total_vf}"
-    draw.text((MARGIN_X + 60, 50), vf_text, font=header_meta_font, fill=VF_COLOR)
+    draw.text((MARGIN_X + 42, 33), vf_text, font=header_meta_font, fill=VF_COLOR)
 
     # SKILL (right-aligned, only when non-empty)
     if skill:
@@ -176,7 +176,7 @@ def render_png(
         skill_w = int(draw.textlength(skill_text, font=header_meta_font))
         _draw_text_within(
             draw, skill_text, header_meta_font,
-            CANVAS_W - MARGIN_X - skill_w, 32,
+            CANVAS_W - MARGIN_X - skill_w, 22,
             CANVAS_W - MARGIN_X, TEXT_PRIMARY,
         )
 
@@ -204,7 +204,7 @@ def render_png(
         canvas.paste(card_img.crop((0, 0, CARD_W, COVER_H)), (cx, cy), mask)
 
         # Title + GRADE (top-right of text area)
-        title_y = cy + COVER_H + 8
+        title_y = cy + COVER_H + 6
         grade_w = int(draw.textlength(r["grade_name"], font=small_font))
         draw.text(
             (cx + CARD_W - 8 - grade_w, title_y),
@@ -216,7 +216,7 @@ def render_png(
         )
 
         # Difficulty tag
-        tag_y = title_y + 20
+        tag_y = cy + COVER_H + 20
         mtype = r.get("type", 0)
         tag_color = _hex_to_rgb(_difficulty_color(mtype))
         tag_text = f"{r['label']} {r['level']}"
@@ -237,7 +237,7 @@ def render_png(
         )
 
         # Bottom row: EX SCORE / VF
-        bottom_y = cy + CARD_H - 24
+        bottom_y = cy + CARD_H - 18
         vf_text = f"{r['volforce']}"
         vf_w = int(draw.textlength(vf_text, font=vf_font))
         draw.text(
@@ -254,4 +254,4 @@ def render_png(
     parent = os.path.dirname(out_path)
     if parent:
         os.makedirs(parent, exist_ok=True)
-    canvas.save(out_path)
+    canvas.save(out_path, "JPEG", quality=90, optimize=True, progressive=True)
