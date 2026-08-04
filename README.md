@@ -102,7 +102,3 @@ pyinstaller SDVX_B50.spec
 
 - [asphyxia-core](https://github.com/asphyxia-core/asphyxia) — 游戏本地服务器
 - [sdvx@asphyxia](https://github.com/22vv0/asphyxia_plugins) — SDVX 插件
-
-## License
-
-MIT
