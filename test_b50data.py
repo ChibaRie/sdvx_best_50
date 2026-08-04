@@ -247,3 +247,24 @@ def test_load_skill_name_neg_one(tmp_path):
     ]
     p.write_text("\n".join(lines) + "\n", encoding="utf-8")
     assert load_skill(parse_db(str(p)), "R1") == ""
+
+
+# ---------------------------------------------------------------------------
+# vf_pct contribution tests
+# ---------------------------------------------------------------------------
+
+def test_build_rows_vf_pct_uneven():
+    recs = [
+        MusicRecord(mid=1, type=0, score=0, exscore=0, volforce=300.0, clear=0, grade=0),
+        MusicRecord(mid=2, type=1, score=0, exscore=0, volforce=100.0, clear=0, grade=0),
+    ]
+    rows = build_rows(recs, {})
+    assert rows[0]["vf_pct"] == 75.0
+    assert rows[1]["vf_pct"] == 25.0
+    assert sum(r["vf_pct"] for r in rows) == 100.0
+
+
+def test_build_rows_vf_pct_zero_sum():
+    recs = [MusicRecord(mid=1, type=0, score=0, exscore=0, volforce=0.0, clear=0, grade=0)]
+    rows = build_rows(recs, {})
+    assert rows[0]["vf_pct"] == 0.0

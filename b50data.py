@@ -140,6 +140,7 @@ def diff_level(entry: dict, mtype: int, version: int = 7) -> str:
 
 
 def build_rows(top: list[MusicRecord], mdb: dict[str, dict], version: int = 7) -> list[dict]:
+    vf_sum = sum(r.volforce for r in top)
     rows = []
     for rec in top:
         entry = mdb.get(str(rec.mid))
@@ -150,10 +151,11 @@ def build_rows(top: list[MusicRecord], mdb: dict[str, dict], version: int = 7) -
             title = info.get("title_name", "Unknown")
             label = diff_label(info.get("inf_ver", "7"), rec.type)
             level = diff_level(entry, rec.type, version)
+        pct = round(rec.volforce / vf_sum * 100, 1) if vf_sum > 0 else 0.0
         rows.append({
             "mid": rec.mid, "type": rec.type, "title": title, "label": label,
             "level": level, "score": rec.score, "exscore": rec.exscore,
-            "volforce": rec.volforce, "clear": rec.clear, "grade": rec.grade,
+            "volforce": rec.volforce, "vf_pct": pct, "clear": rec.clear, "grade": rec.grade,
             "clear_name": CLEAR_NAMES.get(rec.clear, "No Data"),
             "grade_name": GRADE_NAMES.get(rec.grade, "No Grade"),
         })
