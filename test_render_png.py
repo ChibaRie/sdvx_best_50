@@ -17,8 +17,8 @@ def test_render_png_card_grid_no_overlap(tmp_path):
     render_png(rows, "Tester", 11.184, str(out))
     img = Image.open(out)
     assert img.width == 1200
-    # 高度 = 玩家条 80 + 上边距 20 + 10*(290+12) - 12 + 下边距 20 = 3128
-    assert img.height >= 3100
+    # 高度 = 玩家条 80 + 上边距 20 + 10*(88+15) - 15 + 下边距 20 = 1135
+    assert 1100 <= img.height < 1400
     img.close()
 
 

@@ -1,6 +1,7 @@
-"""Card-grid PNG renderer for SDVX B50.
+"""Card-grid JPEG renderer for SDVX B50.
 
-Outputs a 1200px-wide image with a player header bar and a 5×10 card grid.
+Outputs a 1200px-wide image with a player header bar and a 5×10 grid of
+5:2 landscape cards (square cover on the left, song data on the right).
 Long text is truncated with ellipsis.
 """
 import math
@@ -11,13 +12,14 @@ from PIL import Image, ImageDraw, ImageFont
 # Layout constants
 # ---------------------------------------------------------------------------
 CANVAS_W = 1200
-MARGIN_X = 24
+MARGIN_X = 20
 MARGIN_Y = 20
 HEADER_H = 80
 CARD_W = 220
-CARD_H = 290
-COVER_H = 220
-CARD_GAP = 12
+CARD_H = 88
+COVER_SIDE = 88      # 正方形封面 = 2/5 卡片宽 = 卡片高
+DATA_PAD = 6         # 封面与右侧数据区间距
+CARD_GAP = 15
 COLS = 5
 JPEG_QUALITY = 85
 
@@ -99,21 +101,21 @@ def _draw_text_within(
 
 
 def _paste_cover(card_img: Image.Image, cover_path: str | None) -> None:
-    """Paste the cover image onto the top of *card_img*, or draw a placeholder."""
+    """Paste the cover image onto *card_img*, or draw a placeholder."""
     card_draw = ImageDraw.Draw(card_img)
     if cover_path and os.path.isfile(cover_path):
         try:
             with Image.open(cover_path) as im:
                 im = im.convert("RGB")
-                im = im.resize((CARD_W, COVER_H), _RESAMPLE)
+                im = im.resize((COVER_SIDE, COVER_SIDE), _RESAMPLE)
                 card_img.paste(im, (0, 0))
                 return
         except OSError:
             pass
     # Placeholder gradient
-    for y in range(COVER_H):
-        shade = int(60 + (80 - 60) * y / COVER_H)
-        card_draw.line([(0, y), (CARD_W, y)], fill=(shade, shade, shade))
+    for y in range(COVER_SIDE):
+        shade = int(60 + (80 - 60) * y / COVER_SIDE)
+        card_draw.line([(0, y), (COVER_SIDE, y)], fill=(shade, shade, shade))
 
 
 # ---------------------------------------------------------------------------
@@ -155,10 +157,10 @@ def render_png(
     # Fonts
     header_name_font = _font(font_path, 26)
     header_meta_font = _font(font_path, 16)
-    title_font = _font(font_path, 14)
-    small_font = _font(font_path, 11)
-    vf_font = _font(font_path, 13)
-    ex_font = _font(font_path, 10)
+    title_font = _font(font_path, 13)
+    small_font = _font(font_path, 10)
+    vf_font = _font(font_path, 10)
+    ex_font = _font(font_path, 9)
 
     # ---- Header bar --------------------------------------------------------
     draw.rectangle([(0, 0), (CANVAS_W, HEADER_H)], fill=HEADER_BG)
@@ -199,61 +201,65 @@ def render_png(
             radius=10, fill=CARD_BG,
         )
 
-        # Cover area (rounded top corners via mask)
-        card_img = Image.new("RGB", (CARD_W, CARD_H), CARD_BG)
-        _paste_cover(card_img, r.get("cover_path"))
-        mask = Image.new("L", (CARD_W, COVER_H), 0)
+        # Left square cover (2/5 of card width, fills full height)
+        cover_img = Image.new("RGB", (COVER_SIDE, COVER_SIDE), CARD_BG)
+        _paste_cover(cover_img, r.get("cover_path"))
+        mask = Image.new("L", (COVER_SIDE, COVER_SIDE), 0)
         mask_draw = ImageDraw.Draw(mask)
         mask_draw.rounded_rectangle(
-            [(0, 0), (CARD_W, COVER_H + 10)], radius=10, fill=255,
+            [(0, 0), (COVER_SIDE, COVER_SIDE)], radius=10, fill=255,
         )
-        canvas.paste(card_img.crop((0, 0, CARD_W, COVER_H)), (cx, cy), mask)
+        canvas.paste(cover_img, (cx, cy), mask)
 
-        # Title + GRADE (top-right of text area)
-        title_y = cy + COVER_H + 8
+        # Right data area
+        data_x = cx + COVER_SIDE + DATA_PAD
+        data_w = CARD_W - COVER_SIDE - DATA_PAD - 4
+
+        # Title + GRADE (top row)
+        title_y = cy + 6
         grade_w = int(draw.textlength(r["grade_name"], font=small_font))
         draw.text(
-            (cx + CARD_W - 8 - grade_w, title_y),
+            (data_x + data_w - grade_w, title_y),
             r["grade_name"], font=small_font, fill=TEXT_MUTED,
         )
         _draw_text_within(
             draw, r["title"], title_font,
-            cx + 8, title_y, CARD_W - 16 - grade_w - 8, TEXT_PRIMARY,
+            data_x, title_y, data_w - grade_w - 6, TEXT_PRIMARY,
         )
 
-        # Difficulty tag
-        tag_y = title_y + 20
+        # Difficulty tag + SCORE (middle row)
+        tag_y = cy + 30
         mtype = r.get("type", 0)
         tag_color = _hex_to_rgb(_difficulty_color(mtype))
         tag_text = f"{r['label']} {r['level']}"
-        tag_w = int(draw.textlength(tag_text, font=small_font)) + 10
+        tag_w = int(draw.textlength(tag_text, font=small_font)) + 8
         draw.rounded_rectangle(
-            [(cx + 8, tag_y), (cx + 8 + tag_w, tag_y + 18)],
+            [(data_x, tag_y), (data_x + tag_w, tag_y + 18)],
             radius=4, fill=tag_color,
         )
         tag_text_color = (0, 0, 0) if mtype in (0, 1, 4) else (255, 255, 255)
-        draw.text((cx + 13, tag_y + 3), tag_text, font=small_font, fill=tag_text_color)
+        draw.text((data_x + 4, tag_y + 4), tag_text, font=small_font, fill=tag_text_color)
 
         # Score (full number)
         score_text = f"{r['score']}"
         score_w = int(draw.textlength(score_text, font=small_font))
         draw.text(
-            (cx + CARD_W - 8 - score_w, tag_y + 3),
+            (data_x + data_w - score_w, tag_y + 3),
             score_text, font=small_font, fill=TEXT_SECONDARY,
         )
 
-        # Bottom row: EX SCORE / VF
-        bottom_y = cy + CARD_H - 24
+        # Bottom row: EX SCORE (left) / VF·占比 (right)
+        bottom_y = cy + CARD_H - 22
         vf_text = format_vf(r["volforce"], r.get("vf_pct", 0.0))
         vf_w = int(draw.textlength(vf_text, font=vf_font))
         draw.text(
-            (cx + CARD_W - 8 - vf_w, bottom_y + 2),
+            (data_x + data_w - vf_w, bottom_y),
             vf_text, font=vf_font, fill=VF_COLOR,
         )
         ex_text = f"EX: {r.get('exscore', 0)}"
         _draw_text_within(
             draw, ex_text, ex_font,
-            cx + 8, bottom_y + 4, CARD_W - 16 - vf_w - 8, TEXT_SECONDARY,
+            data_x, bottom_y + 3, data_w - vf_w - 4, TEXT_SECONDARY,
         )
 
     # ---- Save --------------------------------------------------------------
