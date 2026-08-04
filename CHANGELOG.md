@@ -3,6 +3,14 @@
 本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与
 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.2.0] - 2026-08-05
+
+### 变更
+
+- 卡片布局改为 **5:2 横向长方形**：正方形封面居左（占卡片宽 2/5、填满高度），
+  标题 / GRADE / 难度标签 / SCORE / EX SCORE / VF·占比 全部在右侧呈现
+- 输出尺寸 1200 × ~1135 px（原 1200 × ~3128），体积进一步降至 ~0.4-1MB
+
 ## [0.2.0] - 2026-08-05
 
 ### 新增
