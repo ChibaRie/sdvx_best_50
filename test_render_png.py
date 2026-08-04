@@ -1,7 +1,7 @@
 import os
 
 from PIL import Image
-from render_png import render_png
+from render_png import format_vf, render_png
 
 
 def test_render_png_card_grid_no_overlap(tmp_path):
@@ -75,3 +75,24 @@ def test_render_png_outputs_jpeg(tmp_path):
     assert img.width == 800
     img.close()
     assert os.path.getsize(str(out)) < 300_000
+
+
+def test_format_vf_appends_pct():
+    assert format_vf(250.0, 12.3) == "250.0 ·12.3%"
+    assert format_vf(1.5, 0.1) == "1.5 ·0.1%"
+    assert format_vf(0.0, 0.0) == "0.0 ·0.0%"
+
+
+def test_render_png_with_vf_pct_no_crash(tmp_path):
+    rows = [{
+        "mid": 1, "type": 0, "title": "T", "label": "NOV", "level": "5",
+        "score": 100, "exscore": 90, "volforce": 10.0, "vf_pct": 100.0,
+        "clear": 6, "grade": 10, "clear_name": "PUC", "grade_name": "S",
+        "cover_path": None,
+    }]
+    out = tmp_path / "b50.jpg"
+    render_png(rows, "Tester", 1.0, str(out))
+    img = Image.open(out)
+    assert img.format == "JPEG"
+    assert img.width == 800
+    img.close()

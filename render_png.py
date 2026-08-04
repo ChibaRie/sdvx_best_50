@@ -58,6 +58,11 @@ def _hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
     return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))  # type: ignore[return-value]
 
 
+def format_vf(vf: float, pct: float) -> str:
+    """Format the VF value plus its share of total VOLFORCE, e.g. '250.0 ·12.3%'."""
+    return f"{vf} ·{pct}%"
+
+
 def _difficulty_color(mtype: int) -> str:
     """Return the hex color for a given difficulty type."""
     return DIFF_COLORS.get(mtype, "#888888")
@@ -238,7 +243,7 @@ def render_png(
 
         # Bottom row: EX SCORE / VF
         bottom_y = cy + CARD_H - 18
-        vf_text = f"{r['volforce']}"
+        vf_text = format_vf(r["volforce"], r.get("vf_pct", 0.0))
         vf_w = int(draw.textlength(vf_text, font=vf_font))
         draw.text(
             (cx + CARD_W - 8 - vf_w, bottom_y + 2),
