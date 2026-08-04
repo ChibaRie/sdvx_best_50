@@ -68,4 +68,4 @@ def test_render_html_includes_vf_pct_column(tmp_path):
     render_html(rows, "Tester", 1.725, str(out))
     text = out.read_text(encoding="utf-8")
     assert "VF占比" in text
-    assert "100.0%" in text
+    assert "100.0000%" in text

@@ -16,9 +16,9 @@ def test_render_png_card_grid_no_overlap(tmp_path):
     out = tmp_path / "b50.png"
     render_png(rows, "Tester", 11.184, str(out))
     img = Image.open(out)
-    assert img.width == 800
-    # 高度 = 头部 56 + 边距 14 + 10*(200+10) - 10 + 14 = 2174
-    assert img.height >= 2000
+    assert img.width == 1200
+    # 高度 = 玩家条 80 + 上边距 20 + 10*(290+12) - 12 + 下边距 20 = 3128
+    assert img.height >= 3100
     img.close()
 
 
@@ -32,7 +32,7 @@ def test_render_png_renders_exscore(tmp_path):
     render_png(rows, "Tester", 1.0, str(out))
     img = Image.open(out)
     # EX SCORE 视觉断言困难，仅验证无报错且尺寸正确
-    assert img.width == 800
+    assert img.width == 1200
     img.close()
 
 
@@ -45,7 +45,7 @@ def test_render_png_long_title_does_not_crash(tmp_path):
     out = tmp_path / "b50.png"
     render_png(rows, "Tester", 5.0, str(out))
     img = Image.open(out)
-    assert img.width == 800
+    assert img.width == 1200
     img.close()
 
 
@@ -58,7 +58,7 @@ def test_render_png_with_skill_no_crash(tmp_path):
     out = tmp_path / "b50.png"
     render_png(rows, "Tester", 1.0, str(out), skill="蒼穹")
     img = Image.open(out)
-    assert img.width == 800
+    assert img.width == 1200
     img.close()
 
 
@@ -72,15 +72,16 @@ def test_render_png_outputs_jpeg(tmp_path):
     render_png(rows, "Tester", 11.0, str(out))
     img = Image.open(out)
     assert img.format == "JPEG"
-    assert img.width == 800
+    assert img.width == 1200
     img.close()
-    assert os.path.getsize(str(out)) < 300_000
+    # JPEG 远小于原 5.2MB PNG，即便有真实封面也不应超过 2MB
+    assert os.path.getsize(str(out)) < 2_000_000
 
 
 def test_format_vf_appends_pct():
-    assert format_vf(250.0, 12.3) == "250.0 ·12.3%"
-    assert format_vf(1.5, 0.1) == "1.5 ·0.1%"
-    assert format_vf(0.0, 0.0) == "0.0 ·0.0%"
+    assert format_vf(250.0, 12.3456) == "250.0 ·12.3456%"
+    assert format_vf(1.5, 0.1) == "1.5 ·0.1000%"
+    assert format_vf(0.0, 0.0) == "0.0 ·0.0000%"
 
 
 def test_render_png_with_vf_pct_no_crash(tmp_path):
@@ -94,5 +95,5 @@ def test_render_png_with_vf_pct_no_crash(tmp_path):
     render_png(rows, "Tester", 1.0, str(out))
     img = Image.open(out)
     assert img.format == "JPEG"
-    assert img.width == 800
+    assert img.width == 1200
     img.close()

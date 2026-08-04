@@ -268,3 +268,13 @@ def test_build_rows_vf_pct_zero_sum():
     recs = [MusicRecord(mid=1, type=0, score=0, exscore=0, volforce=0.0, clear=0, grade=0)]
     rows = build_rows(recs, {})
     assert rows[0]["vf_pct"] == 0.0
+
+
+def test_build_rows_vf_pct_four_decimals():
+    recs = [
+        MusicRecord(mid=1, type=0, score=0, exscore=0, volforce=100.0, clear=0, grade=0),
+        MusicRecord(mid=2, type=1, score=0, exscore=0, volforce=200.0, clear=0, grade=0),
+    ]
+    rows = build_rows(recs, {})
+    assert rows[0]["vf_pct"] == 33.3333
+    assert rows[1]["vf_pct"] == 66.6667

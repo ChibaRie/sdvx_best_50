@@ -24,7 +24,7 @@ def render_html(rows: list[dict], player_name: str, total_vf: float, out_path: s
             f'<td>{r["score"]}</td><td>{r["exscore"]}</td>'
             f'<td>{r["grade_name"]}</td>'
             f'<td>{r["volforce"]}</td>'
-            f'<td>{r.get("vf_pct", 0.0)}%</td>'
+            f'<td>{r.get("vf_pct", 0.0):.4f}%</td>'
             "</tr>"
         )
     h1 = f"{html.escape(player_name)} - VOLFORCE {total_vf}"

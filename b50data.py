@@ -151,7 +151,7 @@ def build_rows(top: list[MusicRecord], mdb: dict[str, dict], version: int = 7) -
             title = info.get("title_name", "Unknown")
             label = diff_label(info.get("inf_ver", "7"), rec.type)
             level = diff_level(entry, rec.type, version)
-        pct = round(rec.volforce / vf_sum * 100, 1) if vf_sum > 0 else 0.0
+        pct = round(rec.volforce / vf_sum * 100, 4) if vf_sum > 0 else 0.0
         rows.append({
             "mid": rec.mid, "type": rec.type, "title": title, "label": label,
             "level": level, "score": rec.score, "exscore": rec.exscore,
