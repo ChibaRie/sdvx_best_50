@@ -93,6 +93,32 @@ def select_best50(records: list[MusicRecord]) -> tuple[list[MusicRecord], float]
 # ---------------------------------------------------------------------------
 # Task 3: mdb loading & row assembly
 # ---------------------------------------------------------------------------
+#
+# VF (VOLFORCE) formula reference — computed by asphyxia, stored in DB:
+#   VF = 难度等级 × (score / 10,000,000)² × GRADE系数 × CLEAR系数
+#
+# CLEAR coefficients:
+#   0: No Data         → 不计算
+#   1: PLAYED          → 0.50
+#   2: EFFECTIVE CLEAR → 1.00
+#   3: EXCESSIVE CLEAR → 1.02
+#   4: MAXXIVE CLEAR   → 1.04
+#   5: UC              → 1.06
+#   6: PUC             → 1.10
+#
+# GRADE coefficients (by required score):
+#   D   : —            0.80
+#   C   : 6,500,000    0.82
+#   B   : 7,500,000    0.85
+#   A   : 8,700,000    0.88
+#   A+  : 9,000,000    0.91
+#   AA  : 9,300,000    0.94
+#   AA+ : 9,500,000    0.97
+#   AAA : 9,700,000    1.00
+#   AAA+: 9,800,000    1.02
+#   S   : 9,900,000    1.05
+#
+# Total VOLFORCE = sum(单曲VF) / 1000
 
 TYPE_KEYS = {0: "novice", 1: "advanced", 2: "exhaust", 3: "infinite", 4: "maximum", 5: "ultimate"}
 
@@ -103,7 +129,7 @@ CLEAR_NAMES = {
 
 GRADE_NAMES = {
     0: "No Grade", 1: "D", 2: "C", 3: "B", 4: "A", 5: "A+",
-    6: "AAA", 7: "AA+", 8: "AAA", 9: "AAA+", 10: "S",
+    6: "AA", 7: "AA+", 8: "AAA", 9: "AAA+", 10: "S",
 }
 
 INF_LABELS = {2: "INF", 3: "GRV", 4: "HVN", 5: "VVD", 6: "XCD", 7: "NBL"}
