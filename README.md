@@ -12,7 +12,7 @@
 
 ### 1. 下载
 
-从 [Releases](https://github.com/ChibaRie/sdvx_best_50/releases) 下载 `SDVX_B50.exe`。
+从 [Releases](https://github.com/ChibaRie/sdvx_asphyxia_best_50/releases) 下载 `SDVX_B50.exe`。
 
 ### 2. 运行
 
