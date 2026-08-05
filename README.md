@@ -2,7 +2,7 @@
 
 > BEMANI 音乐游戏 **SOUND VOLTEX EXCEED GEAR / ∇** 的 Best 50 成绩卡片生成器。
 
-从 [asphyxia](https://github.com/asphyxia-core)（氧无）本地服务器存档中提取玩家成绩，按 **VOLFORCE** 降序取前 50 个不同谱面，生成卡片网格 JPEG 和自包含 HTML。
+从 [asphyxia](https://github.com/asphyxia-core)（氧无）本地服务器存档中提取玩家成绩，按 **VOLFORCE** 降序取前 50 个不同谱面，生成 JPEG 格式 b50 和自包含 HTML。
 
 ## 预览
 
