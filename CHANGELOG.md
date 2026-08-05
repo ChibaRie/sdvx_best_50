@@ -3,6 +3,13 @@
 本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与
 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.2.1] - 2026-08-05
+
+### 修正
+
+- 修正 GRADE 名称映射：ID=6 错误显示为 "AAA"，现正确显示为 **"AA"**
+- 代码中补入完整 VF 公式与系数表注释（CLEAR + GRADE）
+
 ## [1.2.0] - 2026-08-05
 
 ### 变更
